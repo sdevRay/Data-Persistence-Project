@@ -1,14 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
     public static DataManager Instance { get; private set; }
+    public SaveData TopScore;
     public string CurrentPlayerName;
+    public int CurrentScore;
 	private void Awake()
 	{
-        if(Instance != null)
+		Debug.Log(Application.persistentDataPath);
+
+		if (Instance != null)
         {
             Destroy(gameObject);
             return;
@@ -17,15 +23,29 @@ public class DataManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 	}
-	// Start is called before the first frame update
-	void Start()
+
+    [Serializable]
+    public class SaveData
     {
-        
+        public string Name;
+        public int Score;
     }
 
-    // Update is called once per frame
-    void Update()
+	public void SaveScore()
+	{
+		var saveData = new SaveData() { Name = CurrentPlayerName, Score = CurrentScore };
+        var json = JsonUtility.ToJson(saveData);
+        File.WriteAllText(Application.persistentDataPath + "/saveData.json", json);
+	}
+
+    public void LoadScore()
     {
-        
+        var path = Application.persistentDataPath + "/saveData.json";
+        if (File.Exists(path)) 
+        { 
+            var json = File.ReadAllText(path);
+		    var obj = JsonUtility.FromJson<SaveData>(json);
+            TopScore = obj;
+		}
     }
 }

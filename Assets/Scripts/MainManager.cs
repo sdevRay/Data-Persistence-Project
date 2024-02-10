@@ -11,6 +11,7 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text TopScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -70,6 +71,8 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        TopScoreText.text = DataManager.Instance.CurrentPlayerName;
+
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
